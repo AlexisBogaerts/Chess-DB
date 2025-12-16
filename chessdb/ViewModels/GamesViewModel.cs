@@ -125,10 +125,6 @@ public partial class GamesViewModel : ViewModelBase
 
         if (SelectedGame != null && Games.Contains(SelectedGame))
         {
-            // Restaurer les anciens ELO avant de recalculer
-            var oldWhite = await _db.Players.FindAsync(SelectedGame.WhiteId);
-            var oldBlack = await _db.Players.FindAsync(SelectedGame.BlackId);
-
             // Mise à jour
             SelectedGame.CompetitionId = SelectedCompetition.Id;
             SelectedGame.WhiteId = WhitePlayer.Id;
@@ -151,7 +147,6 @@ public partial class GamesViewModel : ViewModelBase
                 PlayedAt = PlayedAt
             };
             _db.Games.Add(newGame);
-            Games.Add(newGame);
         }
 
         // Calculer les nouveaux ELO
@@ -166,7 +161,11 @@ public partial class GamesViewModel : ViewModelBase
 
         _db.Players.UpdateRange(WhitePlayer, BlackPlayer);
         await _db.SaveChangesAsync();
+        
+        // IMPORTANT: Recharger les listes pour avoir les nouvelles valeurs
         await LoadGamesAsync();
+        await LoadPlayersAsync();  // Pour mettre à jour les ELO affichés
+        
         CancelEdit();
     }
 
