@@ -1,0 +1,268 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:chessdb.ViewModels"
+             x:Class="chessdb.Views.StatisticsView"
+             x:DataType="vm:StatisticsViewModel">
+
+  <ScrollViewer>
+    <StackPanel Spacing="20">
+      
+      <!-- Bouton refresh -->
+      <Button Content="🔄 Actualiser" 
+              Command="{Binding RefreshCommand}"
+              HorizontalAlignment="Right"
+              Background="#3498DB"
+              Foreground="White"
+              Padding="15,8"/>
+
+      <!-- Cartes de statistiques générales -->
+      <Grid ColumnDefinitions="*,*,*,*" ColumnSpacing="15">
+        
+        <!-- Total joueurs -->
+        <Border Grid.Column="0" 
+                Background="White" 
+                CornerRadius="8" 
+                Padding="20"
+                BoxShadow="0 2 8 0 #10000000">
+          <StackPanel>
+            <TextBlock Text="👥" FontSize="32" HorizontalAlignment="Center"/>
+            <TextBlock Text="{Binding TotalPlayers}" 
+                       FontSize="36" 
+                       FontWeight="Bold"
+                       HorizontalAlignment="Center"
+                       Foreground="#3498DB"
+                       Margin="0,10,0,5"/>
+            <TextBlock Text="Joueurs" 
+                       FontSize="14"
+                       Foreground="Gray"
+                       HorizontalAlignment="Center"/>
+          </StackPanel>
+        </Border>
+
+        <!-- Total compétitions -->
+        <Border Grid.Column="1" 
+                Background="White" 
+                CornerRadius="8" 
+                Padding="20"
+                BoxShadow="0 2 8 0 #10000000">
+          <StackPanel>
+            <TextBlock Text="🏆" FontSize="32" HorizontalAlignment="Center"/>
+            <TextBlock Text="{Binding TotalCompetitions}" 
+                       FontSize="36" 
+                       FontWeight="Bold"
+                       HorizontalAlignment="Center"
+                       Foreground="#27AE60"
+                       Margin="0,10,0,5"/>
+            <TextBlock Text="Compétitions" 
+                       FontSize="14"
+                       Foreground="Gray"
+                       HorizontalAlignment="Center"/>
+          </StackPanel>
+        </Border>
+
+        <!-- Total parties -->
+        <Border Grid.Column="2" 
+                Background="White" 
+                CornerRadius="8" 
+                Padding="20"
+                BoxShadow="0 2 8 0 #10000000">
+          <StackPanel>
+            <TextBlock Text="♟️" FontSize="32" HorizontalAlignment="Center"/>
+            <TextBlock Text="{Binding TotalGames}" 
+                       FontSize="36" 
+                       FontWeight="Bold"
+                       HorizontalAlignment="Center"
+                       Foreground="#E74C3C"
+                       Margin="0,10,0,5"/>
+            <TextBlock Text="Parties" 
+                       FontSize="14"
+                       Foreground="Gray"
+                       HorizontalAlignment="Center"/>
+          </StackPanel>
+        </Border>
+
+        <!-- ELO moyen -->
+        <Border Grid.Column="3" 
+                Background="White" 
+                CornerRadius="8" 
+                Padding="20"
+                BoxShadow="0 2 8 0 #10000000">
+          <StackPanel>
+            <TextBlock Text="📊" FontSize="32" HorizontalAlignment="Center"/>
+            <TextBlock Text="{Binding AverageElo}" 
+                       FontSize="36" 
+                       FontWeight="Bold"
+                       HorizontalAlignment="Center"
+                       Foreground="#F39C12"
+                       Margin="0,10,0,5"/>
+            <TextBlock Text="ELO Moyen" 
+                       FontSize="14"
+                       Foreground="Gray"
+                       HorizontalAlignment="Center"/>
+          </StackPanel>
+        </Border>
+      </Grid>
+
+      <!-- Meilleur joueur -->
+      <Border Background="White" 
+              CornerRadius="8" 
+              Padding="25"
+              BoxShadow="0 2 8 0 #10000000"
+              IsVisible="{Binding TopPlayer, Converter={x:Static ObjectConverters.IsNotNull}}">
+        <StackPanel>
+          <TextBlock Text="🌟 Meilleur joueur" 
+                     FontSize="20" 
+                     FontWeight="Bold"
+                     Margin="0,0,0,15"/>
+          <Grid ColumnDefinitions="Auto,*,Auto">
+            <TextBlock Grid.Column="0" 
+                       Text="👑" 
+                       FontSize="48"
+                       VerticalAlignment="Center"
+                       Margin="0,0,20,0"/>
+            <StackPanel Grid.Column="1" VerticalAlignment="Center">
+              <TextBlock FontSize="24" FontWeight="Bold">
+                <Run Text="{Binding TopPlayer.FirstName}"/>
+                <Run Text=" "/>
+                <Run Text="{Binding TopPlayer.LastName}"/>
+              </TextBlock>
+              <TextBlock Text="{Binding TopPlayer.Email}" 
+                         FontSize="14"
+                         Foreground="Gray"
+                         Margin="0,5,0,0"/>
+            </StackPanel>
+            <Border Grid.Column="2" 
+                    Background="#F39C12"
+                    CornerRadius="8"
+                    Padding="20"
+                    VerticalAlignment="Center">
+              <StackPanel HorizontalAlignment="Center">
+                <TextBlock Text="{Binding TopPlayer.Elo}" 
+                           FontSize="32"
+                           FontWeight="Bold"
+                           Foreground="White"
+                           HorizontalAlignment="Center"/>
+                <TextBlock Text="ELO" 
+                           FontSize="12"
+                           Foreground="White"
+                           HorizontalAlignment="Center"/>
+              </StackPanel>
+            </Border>
+          </Grid>
+        </StackPanel>
+      </Border>
+
+      <!-- Top 10 joueurs -->
+      <Border Background="White" 
+              CornerRadius="8" 
+              Padding="25"
+              BoxShadow="0 2 8 0 #10000000">
+        <StackPanel>
+          <TextBlock Text="🏅 Top 10 des joueurs" 
+                     FontSize="20" 
+                     FontWeight="Bold"
+                     Margin="0,0,0,15"/>
+          
+          <DataGrid ItemsSource="{Binding TopPlayers}"
+                    AutoGenerateColumns="False"
+                    IsReadOnly="True"
+                    GridLinesVisibility="Horizontal"
+                    BorderThickness="0">
+            <DataGrid.Columns>
+              <DataGridTextColumn Header="#" 
+                                  Binding="{Binding Rank}" 
+                                  Width="50"/>
+              <DataGridTextColumn Header="Joueur" 
+                                  Binding="{Binding PlayerName}" 
+                                  Width="2*"/>
+              <DataGridTextColumn Header="ELO" 
+                                  Binding="{Binding Elo}" 
+                                  Width="80"/>
+              <DataGridTextColumn Header="Victoires" 
+                                  Binding="{Binding Wins}" 
+                                  Width="100"/>
+              <DataGridTextColumn Header="Défaites" 
+                                  Binding="{Binding Losses}" 
+                                  Width="100"/>
+              <DataGridTextColumn Header="Nulles" 
+                                  Binding="{Binding Draws}" 
+                                  Width="80"/>
+              <DataGridTextColumn Header="Total" 
+                                  Binding="{Binding TotalGames}" 
+                                  Width="80"/>
+              <DataGridTextColumn Header="% Victoires" 
+                                  Binding="{Binding WinRate}" 
+                                  Width="100"/>
+            </DataGrid.Columns>
+          </DataGrid>
+        </StackPanel>
+      </Border>
+
+      <!-- Compétitions récentes -->
+      <Border Background="White" 
+              CornerRadius="8" 
+              Padding="25"
+              BoxShadow="0 2 8 0 #10000000">
+        <StackPanel>
+          <TextBlock Text="📅 Compétitions récentes" 
+                     FontSize="20" 
+                     FontWeight="Bold"
+                     Margin="0,0,0,15"/>
+          
+          <ItemsControl ItemsSource="{Binding RecentCompetitions}">
+            <ItemsControl.ItemTemplate>
+              <DataTemplate>
+                <Border BorderBrush="#E0E0E0" 
+                        BorderThickness="0,0,0,1"
+                        Padding="0,15">
+                  <Grid ColumnDefinitions="*,Auto">
+                    <StackPanel Grid.Column="0">
+                      <TextBlock Text="{Binding Name}" 
+                                 FontSize="16" 
+                                 FontWeight="SemiBold"/>
+                      <TextBlock Foreground="Gray" FontSize="12" Margin="0,5,0,0">
+                        <Run Text="📅"/>
+                        <Run Text="{Binding StartDate, StringFormat={}{0:dd/MM/yyyy}}"/>
+                        <Run Text=" - "/>
+                        <Run Text="{Binding EndDate, StringFormat={}{0:dd/MM/yyyy}}"/>
+                      </TextBlock>
+                    </StackPanel>
+                    
+                    <StackPanel Grid.Column="1" 
+                                Orientation="Horizontal"
+                                Spacing="20">
+                      <StackPanel>
+                        <TextBlock Text="{Binding ParticipantCount}" 
+                                   FontSize="20"
+                                   FontWeight="Bold"
+                                   Foreground="#3498DB"
+                                   HorizontalAlignment="Center"/>
+                        <TextBlock Text="Joueurs" 
+                                   FontSize="11"
+                                   Foreground="Gray"
+                                   HorizontalAlignment="Center"/>
+                      </StackPanel>
+                      
+                      <StackPanel>
+                        <TextBlock Text="{Binding GameCount}" 
+                                   FontSize="20"
+                                   FontWeight="Bold"
+                                   Foreground="#E74C3C"
+                                   HorizontalAlignment="Center"/>
+                        <TextBlock Text="Parties" 
+                                   FontSize="11"
+                                   Foreground="Gray"
+                                   HorizontalAlignment="Center"/>
+                      </StackPanel>
+                    </StackPanel>
+                  </Grid>
+                </Border>
+              </DataTemplate>
+            </ItemsControl.ItemTemplate>
+          </ItemsControl>
+        </StackPanel>
+      </Border>
+
+    </StackPanel>
+  </ScrollViewer>
+</UserControl>

@@ -1,0 +1,255 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:chessdb.ViewModels"
+             xmlns:m="using:chessdb.Models"
+             x:Class="chessdb.Views.GamesView"
+             x:DataType="vm:GamesViewModel">
+
+  <Grid ColumnDefinitions="2*,*">
+    
+    <!-- Liste des parties -->
+    <Border Grid.Column="0" 
+            Background="White" 
+            CornerRadius="8" 
+            Padding="20"
+            Margin="0,0,10,0"
+            BoxShadow="0 2 8 0 #10000000">
+      <Grid RowDefinitions="Auto,Auto,*,Auto">
+        
+        <TextBlock Grid.Row="0" 
+                   Text="Parties jouées" 
+                   FontSize="18" 
+                   FontWeight="Bold"
+                   Margin="0,0,0,15"/>
+
+        <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,0,0,15">
+          <TextBlock Text="Total: " Foreground="Gray"/>
+          <TextBlock Text="{Binding Games.Count}" FontWeight="Bold"/>
+          <TextBlock Text=" parties" Foreground="Gray"/>
+        </StackPanel>
+
+        <ListBox Grid.Row="2"
+                 ItemsSource="{Binding Games}" 
+                 SelectedItem="{Binding SelectedGame}"
+                 Background="Transparent">
+          <ListBox.ItemTemplate>
+            <DataTemplate x:DataType="m:Game">
+              <Border Padding="15,12" BorderBrush="#E0E0E0" BorderThickness="0,0,0,1">
+                <Grid RowDefinitions="Auto,Auto,Auto">
+                  
+                  <!-- Compétition -->
+                  <TextBlock Grid.Row="0" 
+                             Text="{Binding Competition.Name}"
+                             FontSize="11"
+                             Foreground="#95A5A6"
+                             Margin="0,0,0,5"/>
+                  
+                  <!-- Joueurs et résultat -->
+                  <Grid Grid.Row="1" ColumnDefinitions="*,Auto,*">
+                    <StackPanel Grid.Column="0">
+                      <TextBlock FontWeight="Bold">
+                        <Run Text="{Binding White.FirstName}"/>
+                        <Run Text=" "/>
+                        <Run Text="{Binding White.LastName}"/>
+                      </TextBlock>
+                      <TextBlock Text="{Binding White.Elo, StringFormat='ELO: {0}'}" 
+                                 FontSize="11" 
+                                 Foreground="Gray"/>
+                    </StackPanel>
+                    
+                    <Border Grid.Column="1" 
+                            Background="#3498DB"
+                            CornerRadius="4"
+                            Padding="8,4"
+                            Margin="10,0">
+                      <TextBlock Foreground="White" FontWeight="Bold">
+                        <Run Text="{Binding WhiteScore, StringFormat='{}{0:0.#}'}"/>
+                        <Run Text=" - "/>
+                        <Run Text="{Binding BlackScore, StringFormat='{}{0:0.#}'}"/>
+                      </TextBlock>
+                    </Border>
+                    
+                    <StackPanel Grid.Column="2" HorizontalAlignment="Right">
+                      <TextBlock FontWeight="Bold" TextAlignment="Right">
+                        <Run Text="{Binding Black.FirstName}"/>
+                        <Run Text=" "/>
+                        <Run Text="{Binding Black.LastName}"/>
+                      </TextBlock>
+                      <TextBlock Text="{Binding Black.Elo, StringFormat='ELO: {0}'}" 
+                                 FontSize="11" 
+                                 Foreground="Gray"
+                                 TextAlignment="Right"/>
+                    </StackPanel>
+                  </Grid>
+                  
+                  <!-- Date -->
+                  <TextBlock Grid.Row="2" 
+                             Text="{Binding PlayedAt, StringFormat='📅 {0:dd/MM/yyyy HH:mm}'}"
+                             FontSize="11"
+                             Foreground="Gray"
+                             Margin="0,5,0,0"/>
+                </Grid>
+              </Border>
+            </DataTemplate>
+          </ListBox.ItemTemplate>
+        </ListBox>
+
+        <StackPanel Grid.Row="3" 
+                    Orientation="Horizontal" 
+                    HorizontalAlignment="Right"
+                    Margin="0,15,0,0"
+                    Spacing="10">
+          <Button Content="➕ Nouvelle partie" 
+                  Command="{Binding NewGameCommand}"
+                  Background="#27AE60"
+                  Foreground="White"
+                  Padding="15,8"/>
+          <Button Content="✏️ Modifier" 
+                  Command="{Binding EditGameCommand}"
+                  IsEnabled="{Binding SelectedGame, Converter={x:Static ObjectConverters.IsNotNull}}"
+                  Background="#3498DB"
+                  Foreground="White"
+                  Padding="15,8"/>
+          <Button Content="🗑️ Supprimer" 
+                  Command="{Binding DeleteGameCommand}"
+                  IsEnabled="{Binding SelectedGame, Converter={x:Static ObjectConverters.IsNotNull}}"
+                  Background="#E74C3C"
+                  Foreground="White"
+                  Padding="15,8"/>
+        </StackPanel>
+      </Grid>
+    </Border>
+
+    <!-- Panneau droit avec formulaire ou message -->
+    <Border Grid.Column="1" 
+            Background="White" 
+            CornerRadius="8" 
+            Padding="20"
+            BoxShadow="0 2 8 0 #10000000">
+      
+      <Panel>
+        <!-- Formulaire d'édition -->
+        <ScrollViewer IsVisible="{Binding IsEditing}">
+          <StackPanel Spacing="15">
+            <TextBlock Text="Informations de la partie" 
+                       FontSize="18" 
+                       FontWeight="Bold"
+                       Margin="0,0,0,10"/>
+
+            <StackPanel>
+              <TextBlock Text="Compétition *" Margin="0,0,0,5"/>
+              <ComboBox ItemsSource="{Binding Competitions}"
+                        SelectedItem="{Binding SelectedCompetition}"
+                        HorizontalAlignment="Stretch">
+                <ComboBox.ItemTemplate>
+                  <DataTemplate x:DataType="m:Competition">
+                    <TextBlock Text="{Binding Name}"/>
+                  </DataTemplate>
+                </ComboBox.ItemTemplate>
+              </ComboBox>
+            </StackPanel>
+
+            <StackPanel>
+              <TextBlock Text="Joueur Blanc *" Margin="0,0,0,5"/>
+              <ComboBox ItemsSource="{Binding Players}"
+                        SelectedItem="{Binding WhitePlayer}"
+                        HorizontalAlignment="Stretch">
+                <ComboBox.ItemTemplate>
+                  <DataTemplate x:DataType="m:Player">
+                    <StackPanel Orientation="Horizontal">
+                      <TextBlock Text="{Binding FirstName}" Margin="0,0,4,0"/>
+                      <TextBlock Text="{Binding LastName}" Margin="0,0,8,0"/>
+                      <TextBlock Text="{Binding Elo, StringFormat='({0})'}" Foreground="Gray"/>
+                    </StackPanel>
+                  </DataTemplate>
+                </ComboBox.ItemTemplate>
+              </ComboBox>
+            </StackPanel>
+
+            <StackPanel>
+              <TextBlock Text="Joueur Noir *" Margin="0,0,0,5"/>
+              <ComboBox ItemsSource="{Binding Players}"
+                        SelectedItem="{Binding BlackPlayer}"
+                        HorizontalAlignment="Stretch">
+                <ComboBox.ItemTemplate>
+                  <DataTemplate x:DataType="m:Player">
+                    <StackPanel Orientation="Horizontal">
+                      <TextBlock Text="{Binding FirstName}" Margin="0,0,4,0"/>
+                      <TextBlock Text="{Binding LastName}" Margin="0,0,8,0"/>
+                      <TextBlock Text="{Binding Elo, StringFormat='({0})'}" Foreground="Gray"/>
+                    </StackPanel>
+                  </DataTemplate>
+                </ComboBox.ItemTemplate>
+              </ComboBox>
+            </StackPanel>
+
+            <StackPanel>
+              <TextBlock Text="Résultat *" Margin="0,0,0,5"/>
+              <ComboBox ItemsSource="{Binding ResultOptions}"
+                        SelectedItem="{Binding Result}"
+                        HorizontalAlignment="Stretch"/>
+            </StackPanel>
+
+            <StackPanel>
+              <TextBlock Text="Date et heure" Margin="0,0,0,5"/>
+              <DatePicker SelectedDate="{Binding PlayedAt}"/>
+            </StackPanel>
+
+            <StackPanel>
+              <TextBlock Text="Coups PGN (optionnel)" Margin="0,0,0,5"/>
+              <TextBox Text="{Binding MovesPgn}" 
+                       TextWrapping="Wrap"
+                       AcceptsReturn="True"
+                       Height="100"
+                       Watermark="1.e4 e5 2.Nf3 Nc6..."/>
+            </StackPanel>
+
+            <Border Background="#FFF3CD" 
+                    BorderBrush="#FFE69C" 
+                    BorderThickness="1"
+                    CornerRadius="4"
+                    Padding="10">
+              <TextBlock Text="💡 Les ELO seront automatiquement mis à jour lors de l'enregistrement." 
+                         TextWrapping="Wrap"
+                         FontSize="12"/>
+            </Border>
+
+            <StackPanel Orientation="Horizontal" 
+                        HorizontalAlignment="Right"
+                        Spacing="10"
+                        Margin="0,10,0,0">
+              <Button Content="Annuler" 
+                      Command="{Binding CancelEditCommand}"
+                      Padding="15,8"/>
+              <Button Content="💾 Enregistrer" 
+                      Command="{Binding SaveGameCommand}"
+                      Background="#27AE60"
+                      Foreground="White"
+                      Padding="15,8"/>
+            </StackPanel>
+          </StackPanel>
+        </ScrollViewer>
+
+        <!-- Message si aucune sélection -->
+        <StackPanel VerticalAlignment="Center" 
+                    HorizontalAlignment="Center"
+                    IsVisible="{Binding !IsEditing}">
+          <TextBlock Text="♟️" 
+                     FontSize="48" 
+                     HorizontalAlignment="Center"
+                     Foreground="#BDC3C7"
+                     Margin="0,0,0,15"/>
+          <TextBlock Text="Sélectionnez une partie" 
+                     FontSize="16"
+                     Foreground="#7F8C8D"
+                     HorizontalAlignment="Center"/>
+          <TextBlock Text="ou créez-en une nouvelle" 
+                     FontSize="14"
+                     Foreground="#95A5A6"
+                     HorizontalAlignment="Center"
+                     Margin="0,5,0,0"/>
+        </StackPanel>
+      </Panel>
+    </Border>
+  </Grid>
+</UserControl>

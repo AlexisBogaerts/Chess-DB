@@ -9,14 +9,9 @@
     <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
   </PropertyGroup>
 
-  <!-- Ressources Avalonia et dossiers -->
+  <!-- Ressources Avalonia -->
   <ItemGroup>
-    
     <AvaloniaResource Include="Assets\**" />
-    <Folder Include="Models\" />
-    <Folder Include="ViewModels\" />
-    <Folder Include="Views\" />
-    <Folder Include="Services\" />
   </ItemGroup>
 
   <!-- Packages NuGet -->

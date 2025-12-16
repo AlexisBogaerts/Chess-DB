@@ -2,6 +2,8 @@ using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
 using chessdb.Views;
+using chessdb.ViewModels;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace chessdb
 {
@@ -16,7 +18,12 @@ namespace chessdb
         {
             if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
             {
-                desktop.MainWindow = new MainWindow();
+                var mainViewModel = Program.ServiceProvider?.GetRequiredService<MainWindowViewModel>();
+                
+                desktop.MainWindow = new MainWindow
+                {
+                    DataContext = mainViewModel
+                };
             }
 
             base.OnFrameworkInitializationCompleted();

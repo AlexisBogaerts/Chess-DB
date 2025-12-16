@@ -5,21 +5,207 @@
              x:Class="chessdb.Views.PlayersView"
              x:DataType="vm:PlayersViewModel">
 
-  <StackPanel Margin="10">
-    <TextBlock Text="Joueurs" FontSize="20"/>
-    <ListBox ItemsSource="{Binding Players}" SelectedItem="{Binding Selected}">
-      <ListBox.ItemTemplate>
-        <DataTemplate x:DataType="m:Player">
-          <StackPanel Orientation="Horizontal">
-            <TextBlock Text="{Binding FirstName}" Margin="0,0,6,0"/>
-            <TextBlock Text="{Binding LastName}"/>
-            <TextBlock Text=" (" Foreground="Gray"/>
-            <TextBlock Text="{Binding Elo}" Foreground="Gray"/>
-            <TextBlock Text=")"/>
+  <Grid>
+    <Grid.ColumnDefinitions>
+      <ColumnDefinition Width="2*"/>
+      <ColumnDefinition Width="*"/>
+    </Grid.ColumnDefinitions>
+
+    <!-- Liste des joueurs -->
+    <Border Grid.Column="0" 
+            Background="White" 
+            CornerRadius="8" 
+            Padding="20"
+            Margin="0,0,10,0"
+            BoxShadow="0 2 8 0 #10000000">
+      <Grid>
+        <Grid.RowDefinitions>
+          <RowDefinition Height="Auto"/>
+          <RowDefinition Height="Auto"/>
+          <RowDefinition Height="*"/>
+          <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Barre de recherche -->
+        <Grid Grid.Row="0" Margin="0,0,0,15">
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="Auto"/>
+          </Grid.ColumnDefinitions>
+          <TextBox Grid.Column="0" 
+                   Text="{Binding SearchText}"
+                   Watermark="Rechercher un joueur..."
+                   Margin="0,0,10,0"/>
+          <Button Grid.Column="1" 
+                  Content="🔍" 
+                  Command="{Binding SearchCommand}"
+                  Padding="10,5"/>
+        </Grid>
+
+        <!-- Stats -->
+        <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,0,0,15">
+          <TextBlock Text="Total: " Foreground="Gray"/>
+          <TextBlock Text="{Binding Players.Count}" FontWeight="Bold"/>
+          <TextBlock Text=" joueurs" Foreground="Gray"/>
+        </StackPanel>
+
+        <!-- Liste - CHANGEZ Selected en SelectedPlayer -->
+        <ListBox Grid.Row="2"
+                 ItemsSource="{Binding Players}" 
+                 SelectedItem="{Binding SelectedPlayer}"
+                 Background="Transparent">
+          <ListBox.ItemTemplate>
+            <DataTemplate x:DataType="m:Player">
+              <Border Padding="15,10" 
+                      BorderBrush="#E0E0E0" 
+                      BorderThickness="0,0,0,1">
+                <Grid>
+                  <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                  </Grid.ColumnDefinitions>
+                  
+                  <StackPanel Grid.Column="0">
+                    <TextBlock FontWeight="Bold" FontSize="16">
+                      <Run Text="{Binding FirstName}"/>
+                      <Run Text=" "/>
+                      <Run Text="{Binding LastName}"/>
+                    </TextBlock>
+                    <TextBlock Text="{Binding Email}" 
+                               Foreground="Gray" 
+                               FontSize="12"
+                               Margin="0,4,0,0"/>
+                  </StackPanel>
+                  
+                  <Border Grid.Column="1" 
+                          Background="#3498DB"
+                          CornerRadius="4"
+                          Padding="10,5">
+                    <TextBlock Text="{Binding Elo}" 
+                               Foreground="White"
+                               FontWeight="Bold"/>
+                  </Border>
+                </Grid>
+              </Border>
+            </DataTemplate>
+          </ListBox.ItemTemplate>
+        </ListBox>
+
+        <!-- Boutons d'action -->
+        <StackPanel Grid.Row="3" 
+                    Orientation="Horizontal" 
+                    HorizontalAlignment="Right"
+                    Margin="0,15,0,0"
+                    Spacing="10">
+          <Button Content="➕ Nouveau" 
+                  Command="{Binding NewPlayerCommand}"
+                  Background="#27AE60"
+                  Foreground="White"
+                  Padding="15,8"/>
+          <Button Content="✏️ Modifier" 
+                  Command="{Binding EditPlayerCommand}"
+                  IsEnabled="{Binding SelectedPlayer, Converter={x:Static ObjectConverters.IsNotNull}}"
+                  Background="#3498DB"
+                  Foreground="White"
+                  Padding="15,8"/>
+          <Button Content="🗑️ Supprimer" 
+                  Command="{Binding DeletePlayerCommand}"
+                  IsEnabled="{Binding SelectedPlayer, Converter={x:Static ObjectConverters.IsNotNull}}"
+                  Background="#E74C3C"
+                  Foreground="White"
+                  Padding="15,8"/>
+        </StackPanel>
+      </Grid>
+    </Border>
+
+    <!-- Formulaire d'édition -->
+    <Border Grid.Column="1" 
+            Background="White" 
+            CornerRadius="8" 
+            Padding="20"
+            BoxShadow="0 2 8 0 #10000000"
+            IsVisible="{Binding IsEditing}">
+      <ScrollViewer>
+        <StackPanel Spacing="15">
+          <TextBlock Text="Informations du joueur" 
+                     FontSize="18" 
+                     FontWeight="Bold"
+                     Margin="0,0,0,10"/>
+
+          <StackPanel>
+            <TextBlock Text="Prénom *" Margin="0,0,0,5"/>
+            <TextBox Text="{Binding FirstName}" Watermark="Prénom"/>
           </StackPanel>
-        </DataTemplate>
-      </ListBox.ItemTemplate>
-    </ListBox>
-  </StackPanel>
+
+          <StackPanel>
+            <TextBlock Text="Nom *" Margin="0,0,0,5"/>
+            <TextBox Text="{Binding LastName}" Watermark="Nom"/>
+          </StackPanel>
+
+          <StackPanel>
+            <TextBlock Text="Email" Margin="0,0,0,5"/>
+            <TextBox Text="{Binding Email}" Watermark="email@exemple.com"/>
+          </StackPanel>
+
+          <StackPanel>
+            <TextBlock Text="Téléphone" Margin="0,0,0,5"/>
+            <TextBox Text="{Binding Phone}" Watermark="+32 123 456 789"/>
+          </StackPanel>
+
+          <StackPanel>
+            <TextBlock Text="ELO" Margin="0,0,0,5"/>
+            <NumericUpDown Value="{Binding Elo}" 
+                           Minimum="0" 
+                           Maximum="3000"
+                           Increment="10"/>
+          </StackPanel>
+
+          <StackPanel>
+            <TextBlock Text="Date de naissance" Margin="0,0,0,5"/>
+            <DatePicker SelectedDate="{Binding DateOfBirth}"/>
+          </StackPanel>
+
+          <StackPanel Orientation="Horizontal" 
+                      HorizontalAlignment="Right"
+                      Spacing="10"
+                      Margin="0,20,0,0">
+            <Button Content="Annuler" 
+                    Command="{Binding CancelEditCommand}"
+                    Padding="15,8"/>
+            <Button Content="💾 Enregistrer" 
+                    Command="{Binding SavePlayerCommand}"
+                    Background="#27AE60"
+                    Foreground="White"
+                    Padding="15,8"/>
+          </StackPanel>
+        </StackPanel>
+      </ScrollViewer>
+    </Border>
+
+    <!-- Message si aucune sélection -->
+    <Border Grid.Column="1" 
+            Background="White" 
+            CornerRadius="8" 
+            Padding="20"
+            BoxShadow="0 2 8 0 #10000000"
+            IsVisible="{Binding !IsEditing}">
+      <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+        <TextBlock Text="👤" 
+                   FontSize="48" 
+                   HorizontalAlignment="Center"
+                   Foreground="#BDC3C7"
+                   Margin="0,0,0,15"/>
+        <TextBlock Text="Sélectionnez un joueur" 
+                   FontSize="16"
+                   Foreground="#7F8C8D"
+                   HorizontalAlignment="Center"/>
+        <TextBlock Text="ou créez-en un nouveau" 
+                   FontSize="14"
+                   Foreground="#95A5A6"
+                   HorizontalAlignment="Center"
+                   Margin="0,5,0,0"/>
+      </StackPanel>
+    </Border>
+  </Grid>
 </UserControl>
 

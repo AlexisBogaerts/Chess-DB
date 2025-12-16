@@ -1,12 +1,11 @@
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
-using chessdb.ViewModels;
 
 namespace chessdb.Views
 {
-    public partial class PlayersView : UserControl
+    public partial class CompetitionsView : UserControl
     {
-        public PlayersView()
+        public CompetitionsView()
         {
             InitializeComponent();
         }
