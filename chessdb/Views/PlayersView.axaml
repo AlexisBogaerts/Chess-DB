@@ -1,0 +1,25 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:chessdb.ViewModels"
+             xmlns:m="using:chessdb.Models"
+             x:Class="chessdb.Views.PlayersView"
+             x:DataType="vm:PlayersViewModel">
+
+  <StackPanel Margin="10">
+    <TextBlock Text="Joueurs" FontSize="20"/>
+    <ListBox ItemsSource="{Binding Players}" SelectedItem="{Binding Selected}">
+      <ListBox.ItemTemplate>
+        <DataTemplate x:DataType="m:Player">
+          <StackPanel Orientation="Horizontal">
+            <TextBlock Text="{Binding FirstName}" Margin="0,0,6,0"/>
+            <TextBlock Text="{Binding LastName}"/>
+            <TextBlock Text=" (" Foreground="Gray"/>
+            <TextBlock Text="{Binding Elo}" Foreground="Gray"/>
+            <TextBlock Text=")"/>
+          </StackPanel>
+        </DataTemplate>
+      </ListBox.ItemTemplate>
+    </ListBox>
+  </StackPanel>
+</UserControl>
+
