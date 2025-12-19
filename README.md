@@ -338,11 +338,11 @@ flowchart TD
 ```
 
 **Légende** :
-- **Vert** : Début du processus
-- **Bleu** : Calcul ELO (cœur métier)
-- **Violet** : Sauvegarde en base de données
-- **Jaune** : Affichage des résultats
-- **Rose** : Fin du processus
+- Vert : Début du processus
+- Bleu : Calcul ELO (cœur métier)
+- Violet : Sauvegarde en base de données
+- Jaune : Affichage des résultats
+- Rose : Fin du processus
 
 ---
 
@@ -455,7 +455,7 @@ L'architecture en couches facilite l'adaptation :
 
 ### 4.3 Exemple concret : Adaptation pour le Scrabble
 
-Voici comment adapter l'application pour une fédération de Scrabble en **moins de 30 minutes** :
+Voici comment adapter l'application pour une fédération de Scrabble en moins de 30 minutes :
 
 #### Étape 1 : Créer le calculateur de classement (5 min)
 ```csharp
@@ -627,7 +627,7 @@ public class EloCalculator : IRankingCalculator
 // Extension facile sans modifier l'existant
 public class GlickoCalculator : IRankingCalculator
 {
-    public (int, int) Calculate(int elo1, int elo2, double score, int k)
+    public (int, int) Calculate(int elo1, int eo2, double score, int k)
     {
         // Implémentation Glicko
     }
@@ -799,4 +799,129 @@ services.AddTransient<StatisticsViewModel>();
 | Avalonia UI | 11.3.8 | Framework UI cross-platform |
 | Entity Framework Core | 8.0.0 | ORM pour SQLite |
 | CommunityToolkit.Mvvm | 8.2.1 | Helpers MVVM (RelayCommand, ObservableProperty) |
-| SQLite |
+| SQLite | 3.x | Base de données légère et portable |
+
+### 6.4 Structure du projet
+
+```
+chessdb/
+├── Models/                  # Entités métier
+│   ├── Player.cs
+│   ├── Competition.cs
+│   ├── Game.cs
+│   └── Registration.cs
+├── ViewModels/             # Logique de présentation
+│   ├── ViewModelBase.cs
+│   ├── MainWindowViewModel.cs
+│   ├── PlayersViewModel.cs
+│   ├── CompetitionsViewModel.cs
+│   ├── GamesViewModel.cs
+│   └── StatisticsViewModel.cs
+├── Views/                  # Interface utilisateur (XAML)
+│   ├── MainWindow.axaml
+│   ├── PlayersView.axaml
+│   ├── CompetitionsView.axaml
+│   ├── GamesView.axaml
+│   └── StatisticsView.axaml
+├── Services/               # Logique métier et accès données
+│   ├── ChessFedDbContext.cs
+│   ├── EloCalculator.cs
+│   └── PlayerRepository.cs
+├── Program.cs             # Point d'entrée et configuration DI
+└── App.axaml.cs          # Configuration de l'application
+```
+
+---
+
+## 7. Conclusion
+
+### 7.1 Objectifs atteints
+
+Ce projet a permis de développer une application complète de gestion de fédération d'échecs répondant à tous les besoins exprimés :
+
+**Fonctionnalités principales**
+- Gestion complète des joueurs (CRUD)
+- Gestion des compétitions avec inscriptions
+- Encodage des parties avec notation PGN
+- Calcul automatique des classements ELO
+- Persistance des données en SQLite
+
+**Fonctionnalité supplémentaire**
+- Module de statistiques avancées avec tableau de bord, classements détaillés et historique des compétitions
+
+**Qualité du code**
+- Architecture MVVM respectée
+- Principes SOLID appliqués (SRP, OCP, DIP)
+- Injection de dépendances configurée
+- Code facilement testable et maintenable
+
+**Extensibilité**
+- Interface `IRankingCalculator` permettant d'adapter à d'autres sports
+- Nomenclature générique réutilisable
+- Architecture modulaire facilitant les évolutions
+
+### 7.2 Valeur ajoutée
+
+L'application apporte une réelle valeur à la fédération :
+
+1. **Gain de temps** : Automatisation du calcul des ELO et de la gestion des inscriptions
+2. **Fiabilité** : Réduction des erreurs humaines grâce à la validation et au calcul automatique
+3. **Transparence** : Les joueurs peuvent suivre leur progression en temps réel
+4. **Professionnalisme** : Interface moderne et intuitive
+5. **Évolutivité** : Architecture permettant d'ajouter facilement de nouvelles fonctionnalités
+
+### 7.3 Apprentissages techniques
+
+Ce projet a permis de mettre en pratique :
+- La conception orientée objet avec les principes SOLID
+- Le pattern MVVM dans une vraie application
+- L'injection de dépendances et l'inversion de contrôle
+- Entity Framework Core pour la persistance
+- La programmation asynchrone (async/await)
+- La création de diagrammes UML pour documenter l'architecture
+
+### 7.4 Perspectives d'évolution
+
+L'application pourrait être enrichie avec :
+
+**Court terme** :
+- Export PDF des classements et résultats
+- Import/Export CSV pour l'interopérabilité
+- Système de backup automatique de la base de données
+
+**Moyen terme** :
+- Génération automatique de pairings (système suisse)
+- Visualisation graphique de l'évolution des ELO
+- Module de gestion des arbitres
+
+**Long terme** :
+- Application web avec ASP.NET Core
+- API REST pour applications tierces
+- Application mobile (iOS/Android) avec Xamarin
+- Système multi-fédérations avec authentification
+
+### 7.5 Conclusion personnelle
+
+Ce projet démontre qu'une bonne architecture logicielle, basée sur des principes solides , permet de créer une application à la fois fonctionnelle, maintenable et évolutive. L'utilisation de patterns éprouvés (MVVM, Repository, Dependency Injection) et d'interfaces bien conçues garantit que le code pourra évoluer sans nécessiter de refonte majeure.
+
+La capacité d'adaptation de cette application à d'autres fédérations sportives illustre parfaitement l'importance de la conception abstraite et de la séparation des responsabilités. Un changement de quelques lignes de code permet de passer d'une fédération d'échecs à une fédération de tennis, de scrabble ou de tout autre sport.
+
+---
+
+## Références
+
+- **Avalonia Documentation** : https://docs.avaloniaui.net/
+- **Entity Framework Core** : https://docs.microsoft.com/ef/core/
+- **MVVM Pattern** : https://learn.microsoft.com/en-us/dotnet/architecture/maui/mvvm
+- **SOLID Principles** : Robert C. Martin, "Clean Architecture"
+- **ELO Rating System** : Arpad Elo, "The Rating of Chessplayers, Past and Present"
+
+---
+
+## Auteur
+
+**Nom** : Alexis Bogaerts  
+**Matricule** : 23325 
+**Année académique** : 2025-2026  
+
+---
