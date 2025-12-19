@@ -5,7 +5,7 @@
 
 ---
 
-## 📋 Table des matières
+## Table des matières
 
 1. [Introduction](#introduction)
 2. [Fonctionnalité supplémentaire](#fonctionnalité-supplémentaire)
@@ -338,11 +338,11 @@ flowchart TD
 ```
 
 **Légende** :
-- 🟢 **Vert** : Début du processus
-- 🔵 **Bleu** : Calcul ELO (cœur métier)
-- 🟣 **Violet** : Sauvegarde en base de données
-- 🟡 **Jaune** : Affichage des résultats
-- 🔴 **Rose** : Fin du processus
+- **Vert** : Début du processus
+- **Bleu** : Calcul ELO (cœur métier)
+- **Violet** : Sauvegarde en base de données
+- **Jaune** : Affichage des résultats
+- **Rose** : Fin du processus
 
 ---
 
@@ -414,15 +414,15 @@ Les noms des classes sont **volontairement génériques** :
 
 | Classe | Nom actuel | Applicable à |
 |--------|-----------|--------------|
-| `Player` | ✅ Générique | Échecs, Tennis, Football, Scrabble, Bridge |
-| `Competition` | ✅ Générique | Tournois, Championnats, Ligues |
-| `Game` | ✅ Générique | Parties, Matchs, Rencontres |
-| `Registration` | ✅ Générique | Inscriptions universelles |
+| `Player` | Générique | Échecs, Tennis, Football, Scrabble, Bridge |
+| `Competition` | Générique | Tournois, Championnats, Ligues |
+| `Game` | Générique | Parties, Matchs, Rencontres |
+| `Registration` | Générique | Inscriptions universelles |
 
 **Contre-exemple** (ce qu'on aurait pu faire de mal) :
-- ❌ `ChessPlayer` → Trop spécifique
-- ❌ `ChessTournament` → Limite à un seul sport
-- ❌ `ChessMatch` → Non réutilisable
+- `ChessPlayer` → Trop spécifique
+- `ChessTournament` → Limite à un seul sport
+- `ChessMatch` → Non réutilisable
 
 #### 4.1.3 Séparation des responsabilités
 
@@ -447,11 +447,11 @@ L'architecture en couches facilite l'adaptation :
 
 | Élément | Modification nécessaire | Difficulté |
 |---------|------------------------|------------|
-| **Calcul de classement** | Créer nouvelle classe implémentant `IRankingCalculator` | ⭐ Facile |
-| **Labels UI** | Modifier les fichiers XAML | ⭐⭐ Moyen |
-| **Options de résultat** | Adapter `ResultOptions` dans ViewModel | ⭐ Facile |
-| **Structure de données** | Aucune (modèles génériques) | ✅ Rien à faire |
-| **Base de données** | Aucune (structure agnostique) | ✅ Rien à faire |
+| **Calcul de classement** | Créer nouvelle classe implémentant `IRankingCalculator` | Facile |
+| **Labels UI** | Modifier les fichiers XAML | Moyen |
+| **Options de résultat** | Adapter `ResultOptions` dans ViewModel | Facile |
+| **Structure de données** | Aucune (modèles génériques) | Rien à faire |
+| **Base de données** | Aucune (structure agnostique) | Rien à faire |
 
 ### 4.3 Exemple concret : Adaptation pour le Scrabble
 
@@ -499,7 +499,7 @@ services.AddSingleton<IRankingCalculator, ScrabbleEloCalculator>();
 Title="Gestion Fédération de Scrabble"
 ```
 
-**Résultat** : Application fonctionnelle pour le Scrabble en 28 minutes ! 🎯
+**Résultat** : Application fonctionnelle pour le Scrabble en 28 minutes !
 
 ### 4.4 Amélioration future : Configuration dynamique
 
@@ -541,25 +541,25 @@ Chaque ViewModel a une responsabilité unique :
 // PlayersViewModel : Responsable UNIQUEMENT de la gestion des joueurs
 public class PlayersViewModel : ViewModelBase
 {
-    // ✅ Gestion des joueurs seulement
+    // Gestion des joueurs seulement
     public async Task LoadPlayersAsync() { }
     public async Task SavePlayerAsync() { }
     public async Task DeletePlayerAsync() { }
     
-    // ❌ PAS de logique de compétitions
-    // ❌ PAS de calcul ELO
-    // ❌ PAS de statistiques
+    // PAS de logique de compétitions
+    // PAS de calcul ELO
+    // PAS de statistiques
 }
 
 // GamesViewModel : Responsable UNIQUEMENT des parties
 public class GamesViewModel : ViewModelBase
 {
-    // ✅ Gestion des parties seulement
+    // Gestion des parties seulement
     public async Task SaveGameAsync() { }
     public async Task DeleteGameAsync() { }
     
-    // ❌ PAS de gestion de joueurs
-    // ❌ PAS de gestion de compétitions
+    // PAS de gestion de joueurs
+    // PAS de gestion de compétitions
 }
 ```
 
@@ -574,25 +574,25 @@ public class GamesViewModel : ViewModelBase
 // EloCalculator : Responsable UNIQUEMENT du calcul de classement
 public class EloCalculator : IRankingCalculator
 {
-    // ✅ Calcul ELO seulement
+    // Calcul ELO seulement
     public (int, int) Calculate(int elo1, int elo2, double score, int k)
     {
         // Logique mathématique pure
     }
     
-    // ❌ PAS d'accès à la base de données
-    // ❌ PAS de gestion d'interface
+    // PAS d'accès à la base de données
+    // PAS de gestion d'interface
 }
 
 // PlayerRepository : Responsable UNIQUEMENT de l'accès aux données
 public class PlayerRepository : IPlayerRepository
 {
-    // ✅ CRUD sur les joueurs seulement
+    // CRUD sur les joueurs seulement
     public async Task<IEnumerable<Player>> GetAllAsync() { }
     public async Task AddAsync(Player p) { }
     
-    // ❌ PAS de calcul ELO
-    // ❌ PAS de logique métier
+    // PAS de calcul ELO
+    // PAS de logique métier
 }
 ```
 
@@ -609,13 +609,13 @@ public class PlayerRepository : IPlayerRepository
 **Exemple 1 : Interface IRankingCalculator**
 
 ```csharp
-// ✅ FERMÉ à la modification
+// FERMÉ à la modification
 public interface IRankingCalculator
 {
     (int, int) Calculate(int elo1, int elo2, double score, int k);
 }
 
-// ✅ OUVERT à l'extension
+// OUVERT à l'extension
 public class EloCalculator : IRankingCalculator
 {
     public (int, int) Calculate(int elo1, int elo2, double score, int k)
@@ -624,7 +624,7 @@ public class EloCalculator : IRankingCalculator
     }
 }
 
-// ✅ Extension facile sans modifier l'existant
+// Extension facile sans modifier l'existant
 public class GlickoCalculator : IRankingCalculator
 {
     public (int, int) Calculate(int elo1, int elo2, double score, int k)
@@ -633,7 +633,7 @@ public class GlickoCalculator : IRankingCalculator
     }
 }
 
-// ✅ Autre extension sans modifier l'existant
+// Autre extension sans modifier l'existant
 public class ATPRankingCalculator : IRankingCalculator
 {
     public (int, int) Calculate(int elo1, int elo2, double score, int k)
@@ -655,7 +655,7 @@ public class GamesViewModel : ViewModelBase
 {
     private readonly IRankingCalculator _calculator;
     
-    // ✅ Dépend de l'abstraction, pas de l'implémentation
+    // Dépend de l'abstraction, pas de l'implémentation
     public GamesViewModel(IRankingCalculator calculator)
     {
         _calculator = calculator;
@@ -663,7 +663,7 @@ public class GamesViewModel : ViewModelBase
     
     public async Task SaveGameAsync()
     {
-        // ✅ Fonctionne avec N'IMPORTE QUELLE implémentation
+        // Fonctionne avec N'IMPORTE QUELLE implémentation
         var (newElo1, newElo2) = _calculator.Calculate(
             whitePlayer.Elo, 
             blackPlayer.Elo, 
@@ -691,9 +691,9 @@ services.AddSingleton<IRankingCalculator, GlickoCalculator>();
 ```
 
 **Bénéfice** : 
-- ✅ Code existant non modifié (fermé)
-- ✅ Nouvelles fonctionnalités ajoutées facilement (ouvert)
-- ✅ Zéro risque de régression
+- Code existant non modifié (fermé)
+- Nouvelles fonctionnalités ajoutées facilement (ouvert)
+- Zéro risque de régression
 
 ---
 
@@ -706,7 +706,7 @@ Toutes les implémentations de `IRankingCalculator` sont substituables :
 ```csharp
 IRankingCalculator calculator;
 
-// ✅ Toutes ces lignes sont valides et interchangeables
+// Toutes ces lignes sont valides et interchangeables
 calculator = new EloCalculator();
 calculator = new GlickoCalculator();
 calculator = new ATPRankingCalculator();
@@ -720,13 +720,13 @@ var result = calculator.Calculate(2000, 1950, 1.0, 20);
 Les modules de haut niveau (ViewModels) ne dépendent pas des modules de bas niveau (Calculateurs concrets), mais tous deux dépendent d'abstractions (Interfaces) :
 
 ```csharp
-// ❌ MAUVAIS : Dépendance concrète
+// MAUVAIS : Dépendance concrète
 public class GamesViewModel
 {
     private readonly EloCalculator _calculator;  // Dépend d'une implémentation concrète
 }
 
-// ✅ BON : Dépendance abstraite
+// BON : Dépendance abstraite
 public class GamesViewModel
 {
     private readonly IRankingCalculator _calculator;  // Dépend d'une abstraction
